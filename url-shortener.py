@@ -4,7 +4,9 @@ import sys
 import time
 
 from flask import Flask, abort, redirect, request, jsonify, make_response
-
+from functools import wraps
+# For authentication. We are using the PyJWT library
+import jwt
 
 # ### CONSTANTS ###
 # Regular expressions that is used to check URLs for correctness.
@@ -23,6 +25,28 @@ URL_CORRECTNESS_REGEX = (
     r"(?:/?|[/?]\S+)$"                                                  # Finally, we match an optional slash or a (slash or question mark) followed by at least one non-whitespace character. This effectively makes most of the paths wildcards, as they can be anything; but because paths can container arbitrary information, this is OK. At last we match the end-of-string boundary, `$`.
 )
 app = Flask(__name__)
+
+# For simplicity, we are using secret key as constants
+# We used https://jwtsecretkeygenerator.com to generate a random secret key
+JWT_SECRET = "rk8VXd4obfUfKHNzsAHBgYJlq4UVXJ4L1KxiImZ9Js8"
+JWT_ALGO = "HS256"
+
+def require_jwt(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header.startswith("Bearer "):
+            return make_response(jsonify({"message": "Missing or invalid Authorization header"}), 401)
+        token = auth_header.split(" ", 1)[1].strip()
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
+            request.user = payload.get("sub")
+        except jwt.ExpiredSignatureError:
+            return make_response(jsonify({"message": "Token expired"}), 401)
+        except jwt.InvalidTokenError:
+            return make_response(jsonify({"message": "Invalid token"}), 401)
+        return f(*args, **kwargs)
+    return wrapper
 
 id_map_of_url = {}
 
@@ -84,6 +108,7 @@ class IdGenerator:
 id_generator = IdGenerator()
 
 @app.route("/", methods=['GET', 'POST', 'DELETE'])
+@require_jwt
 def root():
     if request.method == "GET":
         return make_response(jsonify({"ids:urls":id_map_of_url}), 200)
@@ -111,6 +136,7 @@ def root():
             return make_response(jsonify({"msg":"All URLs deleted"}), 404)
 
 @app.route("/<string:id>",methods = ['GET','PUT','DELETE'])
+@require_jwt
 def url_with_id(id):
     if request.method == "GET":
         if id in id_map_of_url:
