@@ -36,7 +36,7 @@ def require_jwt(f):
     def wrapper(*args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
         if not auth_header.startswith("Bearer "):
-            return make_response(jsonify({"message": "Missing or invalid Authorization header"}), 401)
+            return make_response(jsonify({"message": "Missing or invalid Authorization header"}), 403)
         token = auth_header.split(" ", 1)[1].strip()
         try:
             payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
