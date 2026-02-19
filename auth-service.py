@@ -2,9 +2,11 @@ import datetime
 from flask import Flask, abort, redirect, request, jsonify, make_response
 # For authentication. We are using the PyJWT library
 import jwt
+import hashlib
 
 app = Flask(__name__)
-
+def simple_sha256(plain_password: str) -> str:
+    return hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
 # For simplicity, we are using secret key as constants
 # We used https://jwtsecretkeygenerator.com to generate a random secret key
 JWT_SECRET = "rk8VXd4obfUfKHNzsAHBgYJlq4UVXJ4L1KxiImZ9Js8"
@@ -13,7 +15,7 @@ JWT_ALGO = "HS256"
 JWT_EXP_MINUTES = 15
 
 database_of_users = {
-    'mulyono': {'pass': 'hidupJokowi', 'token': None}
+    'mulyono': {'pass': simple_sha256('hidupJokowi'), 'token': None}
 }
 
 
@@ -52,7 +54,7 @@ def users():
             abort(409)
         
         # Add them in the database
-        database_of_users[username] = { "pass": password, "token": None }
+        database_of_users[username] = { "pass": simple_sha256(password), "token": None }
         print(f"Pengen meso tapi poso {database_of_users}")
         # Done!
         return "success", 200
@@ -74,10 +76,10 @@ def users():
         if username not in database_of_users: abort(404)
 
         # Check if the password is valid
-        if database_of_users[username]["pass"] != old_password: abort(403)
+        if database_of_users[username]["pass"] != simple_sha256(old_password): abort(403)
 
         # Update the password based on the new password
-        database_of_users[username]["pass"] = new_password
+        database_of_users[username]["pass"] = simple_sha256(new_password)
         print(f"Bahlil Kontol {database_of_users}")
         return make_response(jsonify({"msg":"success"}), 200)
     elif request.method == "PATCH":
@@ -92,7 +94,7 @@ def users():
         new_username = data["new-username"]
         if "password" not in data:
             return make_response(jsonify({"msg":"password not specified"}), 400)
-        old_password = data["password"]
+        password = data["password"]
 
         # Check if the user exists
         if username not in database_of_users: return make_response(jsonify({"msg":"username doesn't exist"}), 400)
@@ -100,7 +102,7 @@ def users():
         if new_username in database_of_users: return make_response(jsonify({"msg":"the new username is already being used"}), 400)
 
         # Check if the password is valid
-        if database_of_users[username]["pass"] != old_password: abort(403)
+        if database_of_users[username]["pass"] != simple_sha256(password): abort(403)
 
         # Update the password based on the new password
         temp_old_user_data = database_of_users[username]
@@ -119,8 +121,8 @@ def login():
         return make_response(jsonify({"message": "username and password required"}), 400)
 
     # Checking provided credentials against the hardcoded User's dictionary
-    print(f"Hidup mulyono 123 {database_of_users}")
-    if username not in database_of_users or database_of_users[username]["pass"] != password:
+    print(f"Hidup mulyono 123 {database_of_users} | {simple_sha256(password)} | {database_of_users[username]['pass']}")
+    if username not in database_of_users or database_of_users[username]["pass"] != simple_sha256(password):
         return make_response(jsonify({"message": "invalid credentials"}), 401)
 
     token = create_jwt(username)
