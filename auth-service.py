@@ -55,7 +55,6 @@ def users():
         
         # Add them in the database
         database_of_users[username] = { "pass": simple_sha256(password), "token": None }
-        print(f"Pengen meso tapi poso {database_of_users}")
         # Done!
         return "success", 200
     elif request.method == "PUT":
@@ -80,7 +79,6 @@ def users():
 
         # Update the password based on the new password
         database_of_users[username]["pass"] = simple_sha256(new_password)
-        print(f"Bahlil Kontol {database_of_users}")
         return make_response(jsonify({"msg":"success"}), 200)
     elif request.method == "PATCH":
         # Try to get the JSON request
@@ -108,7 +106,6 @@ def users():
         temp_old_user_data = database_of_users[username]
         database_of_users.pop(username, None)
         database_of_users[new_username] = temp_old_user_data
-        print(f"Wowo nyawit {database_of_users}")
         return make_response(jsonify({"msg":"success"}), 200)
     
 @app.route("/users/login", methods=["POST"])
@@ -121,13 +118,11 @@ def login():
         return make_response(jsonify({"message": "username and password required"}), 400)
 
     # Checking provided credentials against the hardcoded User's dictionary
-    print(f"Hidup mulyono 123 {database_of_users} | {simple_sha256(password)} | {database_of_users[username]['pass']}")
     if username not in database_of_users or database_of_users[username]["pass"] != simple_sha256(password):
         return make_response(jsonify({"message": "invalid credentials"}), 401)
 
     token = create_jwt(username)
     database_of_users[username]['token'] = token
-    print(f"Hidup mulyono {database_of_users}")
     return make_response(jsonify({"token": f"Bearer {token}"}), 200)
 
 if __name__ == "__main__":
