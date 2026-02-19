@@ -30,8 +30,10 @@ def create_jwt(username: str) -> str:
         token = token.decode("utf-8")
     return token
 
-@app.route("/users",methods = ['POST','PUT'])
+@app.route("/users",methods = ['GET','POST','PUT','PATCH'])
 def users():
+    if request.method == "GET":
+        return make_response(jsonify({"users_record":database_of_users}), 200)
     if request.method == "POST":
         # Try to get the JSON request
         data = request.get_json()
@@ -59,13 +61,13 @@ def users():
         data = request.get_json()
         # Try to get the username, old password and new password
         if "username" not in data:
-            return "username not specified", 400
+            return make_response(jsonify({"msg":"username not specified"}), 400)
         username = data["username"]
-        if "old-password" not in request.form:
-            return "old-password not specified", 400
+        if "old-password" not in data:
+            return make_response(jsonify({"msg":"old-password not specified"}), 400)
         old_password = data["old-password"]
-        if "new-password" not in request.form:
-            return "new-password not specified", 400
+        if "new-password" not in data:
+            return make_response(jsonify({"msg":"new-password not specified"}), 400)
         new_password = data["new-password"]
 
         # Check if the user exists
@@ -78,6 +80,35 @@ def users():
         database_of_users[username]["pass"] = new_password
         print(f"Bahlil Kontol {database_of_users}")
         return make_response(jsonify({"msg":"success"}), 200)
+    elif request.method == "PATCH":
+        # Try to get the JSON request
+        data = request.get_json()
+        # Try to get the old username, new username and password
+        if "username" not in data:
+            return make_response(jsonify({"msg":"username not specified"}), 400)
+        username = data["username"]
+        if "new-username" not in data:
+            return make_response(jsonify({"msg":"new-username not specified"}), 400)
+        new_username = data["new-username"]
+        if "password" not in data:
+            return make_response(jsonify({"msg":"password not specified"}), 400)
+        old_password = data["password"]
+
+        # Check if the user exists
+        if username not in database_of_users: return make_response(jsonify({"msg":"username doesn't exist"}), 400)
+        # Check if the new-username is used
+        if new_username in database_of_users: return make_response(jsonify({"msg":"the new username is already being used"}), 400)
+
+        # Check if the password is valid
+        if database_of_users[username]["pass"] != old_password: abort(403)
+
+        # Update the password based on the new password
+        temp_old_user_data = database_of_users[username]
+        database_of_users.pop(username, None)
+        database_of_users[new_username] = temp_old_user_data
+        print(f"Wowo nyawit {database_of_users}")
+        return make_response(jsonify({"msg":"success"}), 200)
+    
 @app.route("/users/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True) or {}
