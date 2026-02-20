@@ -33,9 +33,9 @@ flask --app url-shortener run
 Methods implemneted for the authentication services are given below:
 
 - POST /users 
- - Creates a new user with the provided username and password.
- - Returns 201 Created - when user is created sucessfully
- - Returns 409 Conflict - the user already exists.
+  - Creates a new user with the provided username and password.
+  - Returns 201 Created - when user is created sucessfully
+  - Returns 409 Conflict - the user already exists.
 
 - PUT /users 
  - Updates the user's password when the correct old password is given.
