@@ -38,21 +38,21 @@ Methods implemneted for the authentication services are given below:
   - Returns 409 Conflict - the user already exists.
 
 - PUT /users 
- - Updates the user's password when the correct old password is given.
- - Returns 200 OK - Sucessfully updated password.
- - Returns 403 Forbidden – incorrect old password given.
- - Returns 404 Not Found – the user does not exist.
+  - Updates the user's password when the correct old password is given.
+  - Returns 200 OK - Sucessfully updated password.
+  - Returns 403 Forbidden – incorrect old password given.
+  - Returns 404 Not Found – the user does not exist.
 
 - Patch /users 
- - Updates the username if the correct password for that username is provided and the new username is not taken already.
- - Returns 200 OK - Sucessfully updated user details.
- - Returns 400 Bad Request - missing required fields 
- - Returns 403 Forbidden - failed authentication.
+  - Updates the username if the correct password for that username is provided and the new username is not taken already.
+  - Returns 200 OK - Sucessfully updated user details.
+  - Returns 400 Bad Request - missing required fields 
+  - Returns 403 Forbidden - failed authentication.
 
 - POST /users/login 
- - Authenticates the user and generates a JWT if the given credentials are valid.
- - Returns 200 OK – JWT returned 
- - Returns 403 Forbidden – invalid credentials
+  - Authenticates the user and generates a JWT if the given credentials are valid.
+  - Returns 200 OK – JWT returned 
+  - Returns 403 Forbidden – invalid credentials
 
 In the URL-shortening service we have added require jwt decorator to ensure all endpoints are accessible only to authenticated users.
 Methods implemneted for are given below:
