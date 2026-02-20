@@ -48,7 +48,6 @@ Methods implemneted for the authentication services are given below:
 - Patch /users
   - Updates the username if the correct password for that username is provided and the new username is not taken already.
   - Returns 200 OK - Sucessfully updated user details.
-  - Returns 400 Bad Request - missing required fields
   - Returns 403 Forbidden - failed authentication.
 
 - POST /users/login
@@ -57,7 +56,6 @@ Methods implemneted for the authentication services are given below:
   - Returns 403 Forbidden – invalid credentials
 
 In the URL-shortening service we have added require jwt decorator to ensure all endpoints are accessible only to authenticated users.
-Methods implemneted for are given below:
 
 - GET/
   - Returns the original URL associated with a given ID.
