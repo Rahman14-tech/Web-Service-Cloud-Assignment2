@@ -7,7 +7,9 @@ This is the implementation of URL shortener service implemented with Flask and t
 ```bash
 pip3 install flask
 ```
-
+```bash
+pip install PyJWT
+```
 You can now run the service
 
 ## Usage
