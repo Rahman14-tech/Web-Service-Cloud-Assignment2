@@ -15,7 +15,9 @@ JWT_ALGO = "HS256"
 JWT_EXP_MINUTES = 15
 
 database_of_users = {
-    'mulyono': {'pass': simple_sha256('hidupJokowi'), 'token': None}
+    'mulyono': {'pass': simple_sha256('hidupJokowi'), 'token': None},
+    'jaden':{'pass': simple_sha256('jaden123'), 'token': None},
+    'ali':{'pass': simple_sha256('ali123'), 'token': None},
 }
 
 
@@ -122,7 +124,7 @@ def login():
         return make_response(jsonify({"message": "invalid credentials"}), 401)
 
     token = create_jwt(username)
-    database_of_users[username]['token'] = token
+    database_of_users[username]['token'] = f"Bearer {token}"
     return make_response(jsonify({"token": f"Bearer {token}"}), 200)
 
 if __name__ == "__main__":
