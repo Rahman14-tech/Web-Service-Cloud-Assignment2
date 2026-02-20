@@ -1,6 +1,6 @@
-# URL-shortening web service with an Authorization service
+# URL-shortening web service with an Authentication service
 
-This is the implementation of URL shortener service implemented with Flask and the Authorization with JSON web tokens.
+This is the implementation of URL shortener service implemented with Flask and the Authentication with JSON web tokens.
 
 ## Installation
 
@@ -16,7 +16,13 @@ You can now run the service
 
 ### Running the service
 
-First, run the flask service:
+First, run the Authentication service:
+
+```bash
+flask --app auth-service run
+```
+
+Then run url-shortnering service in a seperate terminal:
 
 ```bash
 flask --app url-shortener run
