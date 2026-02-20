@@ -81,9 +81,9 @@ Methods implemneted for are given below:
 - PUT/:id
   - Updates the URL associated with a given ID
   - Returns 200 OK – updated successfully
-	- Returns 400 ERROR – URL not vald
-	- Returns 404 Not Found – given ID does not exist
-	- Returnd 403 Forbidden – missing/invalid JWT
+  - Returns 400 ERROR – URL not vald
+  - Returns 404 Not Found – given ID does not exist
+  - Returnd 403 Forbidden – missing/invalid JWT
 
 - DELETE/:id
   - Deletes the shortener URL associated with a given ID
