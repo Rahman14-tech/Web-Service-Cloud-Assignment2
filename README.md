@@ -46,7 +46,8 @@ Methods implemneted for the authentication services are given below:
  - Returns 200 OK – JWT returned 
  - Returns 403 Forbidden – invalid credentials
 
-Methods implemneted for the URL-shortening service are given below:
+In the URL-shortening service we have added require jwt decorator to ensure all endpoints are accessible only to authenticated users.
+Methods implemneted for are given below:
 
 - GET/
   - Returns the original URL associated with a given ID. 
@@ -66,8 +67,8 @@ Methods implemneted for the URL-shortening service are given below:
 
 - GET/:id
   - Returns the full URL for a given ID
-  - Returns 301 Get the Url of the given ID
-  - Returns 404 Not Found
+  - Returns 301 Redirects to the orginal URL 
+  - Returns 404 Not Found - given ID does not exist
   
 - PUT/:id
   - Updates the URL associated with a given ID
