@@ -140,8 +140,7 @@ def root():
 def url_with_id(id):
     if request.method == "GET":
         if id in id_map_of_url:
-            # Redirect user to the related id in the map
-            # The redirect() function will automatically set the correct headers and status code
+            # Give user to the related url of id in the map
             return make_response(jsonify({"value":id_map_of_url[id]}), 301)
         else:
             # Url of that Id is not found
